@@ -47,7 +47,7 @@ end
  	puts
  end
 
-def seleccion_num_barcos
+def select_num_barcos
 
   num_barcos = 10 # inicializado por defecto
 
@@ -66,6 +66,8 @@ def seleccion_num_barcos
     
      break if num_barcos > 3 && num_barcos < 11
   end
+
+  return num_barcos
 
 end
 
@@ -125,7 +127,7 @@ puts
 
 end
 
-def colocar_en_tablero(m,s)
+def colocar_en_tablero(tablero,s)
 
 # coloca un elemento s en el tablero m
 #en la posicion (a,b)
@@ -137,36 +139,64 @@ b = get_keypressed.to_i
 print b
 sleep 0.4
 
-m[a][b] = s
+tablero[a][b] = s
 
 system ('clear')
 
+end
 
+def colocar_en_tablero_aleatorio(tablero,s)
 
+a = rand(tablero.length) + 1
+b = rand(tablero.length) + 1 
+
+puts "a: #{a}  b: #{b}"
+puts
+
+tablero[a][b] = s
+
+system ('clear')
+
+end
+
+def set_barcos_aleatorio(tablero, n)
+ #configuracion inicial aleatoria
+ # de n barcos en el tablero
+ 
+ for k in 0..n do 
+colocar_en_tablero_aleatorio(tablero, "\u2693")
+end
 
 end
 
 
-def set_barcos
+def set_barcos(num_barcos)
 # Pregunta al jugador el numero barcos 
 # que se utilizaran en la partida
 
   #seleccion_num_barcos
  
 
-# incializamos el tablero de barcos
-# 
- num_barcos = 4
+# incializamos el tablero de barcos 
+
 
 barcos_jugador = fill_tablero("\u25a7",10)
+barcos_compu = fill_tablero("\u25a7",10)
 
-mostrar_tablero(barcos_jugador)
+set_barcos_aleatorio(barcos_compu, num_barcos)
 
 for k in 1..num_barcos do 
 colocar_en_tablero(barcos_jugador, "\u2693")
 mostrar_tablero(barcos_jugador)
 sleep 0.5
 end
+
+system('clear')
+puts "Barcos Jugador"
+mostrar_tablero(barcos_jugador)
+puts
+puts"Barcos compu"
+mostrar_tablero(barcos_compu)
 
 end 
 
@@ -182,7 +212,8 @@ def main
 
   bienvenida_msj 
   login_menu
-  set_barcos
+  num_barcos = select_num_barcos
+  set_barcos(num_barcos)
 end
 
 main
