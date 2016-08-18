@@ -16,7 +16,7 @@
   return t
 end
  
-def bienvenida_juego
+def bienvenida_msj
 # Este procedimiento
 # Muestra la pantalla de bienvenida del juego
  	
@@ -36,7 +36,7 @@ def bienvenida_juego
 
 end
 
- def login_juego
+ def login_menu
  	# Este procedimiento
  	# solicita el nombre del jugador
  	
@@ -88,22 +88,24 @@ def fill_tablero(s,n_length)
 
   end
 
+
   return tablero
 
 end
 
 def mostrar_tablero(m)
 
+	row_tags = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    col_tags = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+
 	print "  "
 
     for k in 0..m.length-1 do
-      print "%2d" % k 
+      print "%2s" % col_tags[k]
     end
 
     puts
     puts
-   
-    row_tags = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
   
   for i in 0..m.length-1 do
   
@@ -123,6 +125,27 @@ puts
 
 end
 
+def colocar_en_tablero(m,s)
+
+# coloca un elemento s en el tablero m
+#en la posicion (a,b)
+
+print "Introduzca posicion: "
+a = get_keypressed.to_i 
+print a 
+b = get_keypressed.to_i
+print b
+sleep 0.4
+
+m[a][b] = s
+
+system ('clear')
+
+
+
+
+end
+
 
 def set_barcos
 # Pregunta al jugador el numero barcos 
@@ -133,13 +156,17 @@ def set_barcos
 
 # incializamos el tablero de barcos
 # 
- num_barcos = 10
+ num_barcos = 4
 
-barcos_jugador = fill_tablero("\u25A7",10)
+barcos_jugador = fill_tablero("\u25a7",10)
 
 mostrar_tablero(barcos_jugador)
 
-
+for k in 1..num_barcos do 
+colocar_en_tablero(barcos_jugador, "\u2693")
+mostrar_tablero(barcos_jugador)
+sleep 0.5
+end
 
 end 
 
@@ -148,11 +175,14 @@ end
 
 def main
 
-  #bienvenida_process 
-  #login_process
+
+
+  num_symbols = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+  letras_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+
+  bienvenida_msj 
+  login_menu
   set_barcos
-
-
 end
 
 main
