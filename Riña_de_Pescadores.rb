@@ -16,6 +16,25 @@
   return t
 end
 
+def validar_num_key(t)
+
+  # verifica si la tecla ingresada es numerica
+
+  valido = false
+
+  for k in 0..9 do
+
+      if t == k
+
+        valido = true
+
+      end
+
+  end
+
+  return valido
+end
+
 def anytecla
    puts "Presione cualquier tecla para continuar (s para salir del juego): "
   tecla = get_keypressed  
@@ -27,22 +46,15 @@ def anytecla
   end
 end
 
-def titulo
+def mostrar_titulo
  system('clear') 
 
   puts
   puts "RIÑA DE PESCADORES"
-  put
+  puts  
 
 end
  
-def bienvenida_msj
-# Este procedimiento
-# Muestra la pantalla de bienvenida del juego
- 	
- 
-
-end
 
 def loading_partida
 
@@ -76,6 +88,8 @@ end
  	print "Introduzca su nombre : "
  	jugador_name = gets.chomp 
  	puts
+
+  return jugador_name
  end
 
 def select_num_barcos
@@ -226,48 +240,96 @@ system ('clear')
 
 end
 
-def set_barcos_aleatorio(tablero, n)
- #configuracion inicial aleatoria
- # de n barcos en el tablero
+def set_barcos_aleatorio(tablero_barcos, num_barcos)
+
+#configuracion aleatoria
+# de num_barcos barcos en el tablero
  
- for k in 1..n do 
-colocar_en_tablero_aleatorio(tablero, "\u2693")
-end
+  for k in 1..num_barcos do 
+
+    colocar_en_tablero_aleatorio(tablero_barcos, "\u2693")
+
+  end
 
 end
 
 
-def set_barcos(num_barcos)
-# Pregunta al jugador el numero barcos 
-# que se utilizaran en la partida
+
+def menu_set_barcos(barcos_jugador, num_barcos)
+  loop do 
+  system("clear")
+    puts "Opciones:"
+    puts "1.- Colocar barcos manualmente"
+    puts "2.- Asignarlos de manera aleatoria"
+    puts "s.- Salir del juego"
+    print "Opcion: "
+    op = "2" #debug
+    #op = gets.chomp.downcase
+
+    case op
+    when "1" then 
+    set_barcos(barcos_jugador, num_barcos)
 
 
- 
+    when "2" then  
+    set_barcos_aleatorio(barcos_jugador, num_barcos)
 
-# incializamos el tablero de barcos 
+    when "s" then exit
 
+    else
+      puts "Opcion incorrecta"
+      puts "Presione Enter para continuar..."
+      gets
+  end
 
-barcos_jugador = fill_tablero("\u25a7",10)
-barcos_compu = fill_tablero("\u25a7",10)
+    
+    break if op == "s" || op == "1" || op == "2"
+  end
 
-set_barcos_aleatorio(barcos_compu, num_barcos)
-
-for k in 1..num_barcos do 
-colocar_en_tablero(barcos_jugador, "\u2693")
-mostrar_tablero(barcos_jugador)
-sleep 0.5
 end
 
-system('clear')
-puts "Barcos Jugador"
-mostrar_tablero(barcos_jugador)
-puts
-puts"Barcos compu"
-mostrar_tablero(barcos_compu)
 
-gets
-system('clear')
+def set_barcos(tablero_barcos,num_barcos)
+
+  for k in 1..num_barcos do 
+  colocar_en_tablero(tablero_barcos, "\u2693")
+  mostrar_tablero(tablero_barcos)
+  sleep 0.5
+  end
 end 
+
+ def mostrar_set_tablero(tablero, titulo)
+
+system('clear')
+  puts titulo
+  mostrar_tablero(tablero)
+  puts
+  anytecla
+end
+
+
+def check_atk(x ,y , tablero, simbolo, tablero_barcos)
+
+
+ if tablero_barcos[x][y] == "\u25a7"
+        
+       tablero[x][y] = "\u2635"
+
+      valor = 1
+
+ else tablero_barcos[x][y] == "\u2693"
+
+      tablero[x][y] = "\u2693"
+
+     valor = 2
+
+  end
+
+return valor
+
+# system('clear')
+
+end
 
 
 ###############  main ###########################################
@@ -279,17 +341,113 @@ def main
 
   num_symbols = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
   letras_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-  simbolo = [ "\u25a7", "\u2635","\u2693"  ]
+  simbolo = [ "\u25a7", "\u2635" ,"\u2693"  ]
+  jugador_name = [" ", " " ]
 
-  titulo
-  anytecla
+# inicializamos los tableros de barcos 
+  barcos_jugador = fill_tablero("\u25a7",10)
+  barcos_compu = fill_tablero("\u25a7",10)
+
+  #inicializamos los tableros de targets
+  targets_jugador = fill_tablero("\u25a7",10)
+  targets_compu = fill_tablero("\u25a7",10)
+
+   #mostrar_titulo()
+ # anytecla()
+
   
-  login_menu
-  num_barcos = select_num_barcos
-  #num_barcos = 4 #modo debug
-  set_barcos(num_barcos)
+  #login_menu
+  #num_barcos = select_num_barcos
+  num_barcos = 10 #modo debug
+ 
+ set_barcos_aleatorio(barcos_compu, num_barcos)
+  #mostrar_set_tablero(barcos_compu,"barcos compu")
   
-  loading_partida
+  menu_set_barcos(barcos_jugador, num_barcos)
+  mostrar_set_tablero( barcos_jugador , "barcos jugador" ) 
+
+  
+  #loading_partida
+
+  ## Partida
+  
+  num_barcos_jugador = num_barcos
+
+  num_barcos_jugador =1 #debug
+
+  num_barcos_compu = num_barcos
+
+ round = 0
+
+ loop do 
+
+ 
+ turno = 0
+repetir = 0
+ loop do
+     sol = 0
+
+     while sol == 0  do
+
+     "Ingrese las coordenadas deseadas:"
+
+      a = rand(targets_jugador.length)
+
+      b = rand(targets_jugador.length)
+    
+    if targets_jugador[a][b] != "\u25a7"
+        sol = 0
+        else
+        sol = check_atk(a,b,targets_jugador,simbolo,barcos_compu)
+        end
+      end
+
+puts "sol: #{sol}"
+
+break if repetir==0 || repetir>3
+end
+
+
+turno = 1
+repetir = 0
+
+mostrar_set_tablero( targets_jugador , "targets jugador" ) 
+
+loop do
+     sol = 0
+
+     while sol==0  do
+
+        a = rand(targets_compu.length)
+
+        b = rand(targets_compu.length)
+
+        puts
+        puts "target: #{targets_compu[a][b]}  \u25a7"
+        puts
+ 
+        if targets_compu[a][b] != "\u25a7"
+        sol=0
+        else
+        sol=check_atk(a,b,targets_compu,simbolo,barcos_jugador)
+        end
+      end
+
+puts "sol: #{sol}"
+
+break if repetir==0 || repetir > 3
+end
+
+mostrar_set_tablero( targets_compu , "targets compu" ) 
+
+
+
+round += 1 
+
+
+
+  break if  num_barcos_jugador < 1 ||  num_barcos_compu < 1 || round >97
+end
 
 
 end
