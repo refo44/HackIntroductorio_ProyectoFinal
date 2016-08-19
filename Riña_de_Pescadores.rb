@@ -310,10 +310,10 @@ end
 def mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , tablero,titulo )
 
 system('clear')
-  puts " turno: #{nombre_turno}"
+  puts " turno: #{nombre_turno.upcase}"
   puts " round: #{round}"
   puts " barcos de la computadora hundidos: #{num_barcos-num_barcos_compu}"
-  puts "barcos del jugador hundidos: #{num_barcos-num_barcos_jugador}"
+  puts " barcos del jugador hundidos: #{num_barcos-num_barcos_jugador}"
   puts
   puts titulo
   mostrar_tablero(tablero)
@@ -387,7 +387,7 @@ def main
   
   num_barcos_jugador = num_barcos
 
-  num_barcos_jugador =1 #debug
+  #num_barcos_jugador =1 #debug
 
   num_barcos_compu = num_barcos
 
@@ -407,11 +407,17 @@ def main
 
      while sol == 0  do
 
-     "Ingrese las coordenadas deseadas:"
+     print "Introduzca posicion: "
+    a = get_keypressed.to_i 
+    print a 
+    b = get_keypressed.to_i
+    print b
+    sleep 0.4
+    system('clear')
 
-      a = rand(targets_jugador.length)
+      #a = rand(targets_jugador.length)
 
-      b = rand(targets_jugador.length)
+      #b = rand(targets_jugador.length)
     
     if targets_jugador[a][b] != "\u25a7"
         sol = 0
@@ -420,7 +426,14 @@ def main
         end
       end
 
-puts "sol: #{sol}"
+
+
+if sol==2 then # ataque exitoso
+
+repetir += 1 
+num_barcos_compu -= 1
+
+end  # se realiza un nuevo intento por acertar el ataque
 
 break if repetir==0 || repetir>3
 end
@@ -452,7 +465,13 @@ loop do
         end
       end
 
-puts "sol: #{sol}"
+
+if sol==2 then # ataque exitoso
+
+repetir += 1 
+num_barcos_jugador -= 1
+
+end  # se realiza un nuevo intento por acertar el ataque # se realiza un nuevo intento por acertar el ataque
 
 break if repetir==0 || repetir > 3
 end
@@ -468,10 +487,43 @@ round += 1
   break if  num_barcos_jugador < 1 ||  num_barcos_compu < 1 || round >97
 end
 
+if num_barcos_jugador > num_barcos_compu 
 
+   
+mostrar_titulo()
+
+puts "felicitaciones ".to_upcase
+puts "¡es una victoria!".to_ upcase
+puts 
+
+anytecla
+exit
+
+elsif num_barcos_jugador < num_barcos_compu
+
+puts " esta vez fue una derrota".to_upcase
+puts "¡si lo intentas de nuevo seguro la proxima lo lograras!".to_ upcase
+puts 
+
+anytecla
+
+exit
+
+else
+
+mostrar_titulo()
+
+puts 
+puts "¡Es un empate!".to_ upcase
+puts 
+
+anytecla
+
+exit
 end
 
 main
+
 
 
 
