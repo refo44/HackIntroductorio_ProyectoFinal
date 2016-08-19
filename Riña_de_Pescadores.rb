@@ -6,6 +6,8 @@
  
  # autor: Rafael Figueredo
  
+ require "colorize"
+
  def get_keypressed
 # Lee la tecla pulsada desde el terminal sin presionar Enter
 	
@@ -36,7 +38,8 @@ def validar_num_key(t)
 end
 
 def anytecla
-   puts "Presione cualquier tecla para continuar (s para salir del juego): "
+   print "Presione cualquier tecla para continuar"
+   print " (s para salir del juego): ".colorize(:red)
   tecla = get_keypressed  
 
   system('clear') 
@@ -46,11 +49,20 @@ def anytecla
   end
 end
 
+def make_titulo
+
+  print "\u2693 ".colorize(:blue)
+  print " RIÑA DE PESCADORES ".colorize(:background => :blue)
+  print " \u2693".colorize(:blue)
+  puts
+
+end
+
 def mostrar_titulo
  system('clear') 
 
   puts
-  puts "RIÑA DE PESCADORES"
+   make_titulo()
   puts  
 
 end
@@ -59,20 +71,20 @@ end
 def loading_partida
 
   system('clear')
-  puts "RIÑA DE PESCADORES"
+  make_titulo()
   puts "comenzando partida."
   sleep 0.4
   system('clear')
-  puts "RIÑA DE PESCADORES"
+  make_titulo()
   puts "comenzando partida.."
   sleep 0.4
   system('clear')
-  puts "RIÑA DE PESCADORES"
+  make_titulo()
   puts "comenzando partida..."
   puts
   sleep 0.4
   system('clear')
-  puts "RIÑA DE PESCADORES"
+  make_titulo()
   puts "comenzando partida...."
   sleep 0.4
   system('clear')
@@ -82,8 +94,8 @@ end
  def login_menu
  	# Este procedimiento
  	# solicita el nombre del jugador
- 	
- 	puts "RIÑA DE PESCADORES"
+ 	puts
+ 	make_titulo()
  	puts
  	print "Introduzca su nombre : "
  	jugador_name = gets.chomp 
@@ -101,7 +113,7 @@ def select_num_barcos
     system('clear')
     puts
      if num_barcos < 4 || num_barcos > 10
-      puts "Debe escoger un numero entre 4 y 10"
+      puts " Debe escoger un numero entre 4 y 10 ".colorize(:background => :yellow)
       puts
      end
     
@@ -263,8 +275,9 @@ def menu_set_barcos(barcos_jugador, num_barcos)
     puts "2.- Asignarlos de manera aleatoria"
     puts "s.- Salir del juego"
     print "Opcion: "
-    op = "2" #debug
-    #op = gets.chomp.downcase
+    
+    op = gets.chomp.downcase
+    #op = "2" #debug
 
     case op
     when "1" then 
@@ -310,7 +323,9 @@ end
 def mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , tablero,titulo )
 
 system('clear')
-  puts " turno: #{nombre_turno.upcase}"
+  make_titulo()
+  puts
+  puts " turno: #{nombre_turno.upcase.colorize(:color => :red, :background => :yellow)}"
   puts " round: #{round}"
   puts " barcos de la computadora hundidos: #{num_barcos-num_barcos_compu}"
   puts " barcos del jugador hundidos: #{num_barcos-num_barcos_jugador}"
@@ -320,6 +335,7 @@ system('clear')
   puts
   anytecla
 end
+
 
 
 def check_atk(x ,y , tablero, simbolo, tablero_barcos)
@@ -366,22 +382,22 @@ def main
   targets_jugador = fill_tablero("\u25a7",10)
   targets_compu = fill_tablero("\u25a7",10)
 
-   #mostrar_titulo()
- # anytecla()
+ #mostrar_titulo()
+ #anytecla()
 
   
-  #login_menu
-  #num_barcos = select_num_barcos
+  jugador_name[0] = login_menu()
+  #num_barcos = select_num_barcos()
   num_barcos = 10 #modo debug
  
  set_barcos_aleatorio(barcos_compu, num_barcos)
-  #mostrar_set_tablero(barcos_compu,"barcos compu")
+  mostrar_set_tablero(barcos_compu,"barcos compu")
   
   menu_set_barcos(barcos_jugador, num_barcos)
   mostrar_set_tablero( barcos_jugador , "barcos jugador" ) 
 
   
-  #loading_partida
+  loading_partida()
 
   ## Partida
   
@@ -401,13 +417,15 @@ def main
  turno = 0
  nombre_turno =jugador_name[turno]
  repetir = 0
- mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets jugador")
+
+ mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno)
+ 
  loop do
      sol = 0
 
      while sol == 0  do
-
-     print "Introduzca posicion: "
+    mostrar_tablero(targets_jugador)
+    print "Introduzca posicion: "
     a = get_keypressed.to_i 
     print a 
     b = get_keypressed.to_i
@@ -428,14 +446,19 @@ def main
 
 
 
-if sol==2 then # ataque exitoso
+if sol==2 then # ataque exitoso 
+              #se realiza un nuevo intento por acertar el ataque
 
 repetir += 1 
 num_barcos_compu -= 1
 
-end  # se realiza un nuevo intento por acertar el ataque
+elsif sol == 1  #ataque cayo en el agua
+repetir=0
+end  
 
-break if repetir==0 || repetir>3
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno)
+
+break if repetir==0
 end
 
 
@@ -443,7 +466,7 @@ turno = 1
 nombre_turno =jugador_name[turno]
 repetir = 0
 
-mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets jugador")
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno)
 
 loop do
      sol = 0
@@ -467,16 +490,19 @@ loop do
 
 
 if sol==2 then # ataque exitoso
-
+               # se realiza un nuevo intento por acertar el ataque 
 repetir += 1 
 num_barcos_jugador -= 1
 
-end  # se realiza un nuevo intento por acertar el ataque # se realiza un nuevo intento por acertar el ataque
+elsif sol == 1  #ataque cayo en el agua
+repetir=0
 
-break if repetir==0 || repetir > 3
+end  
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno)
+break if repetir==0 
 end
 
-mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets compu")
+
 
 
 
@@ -484,26 +510,26 @@ round += 1
 
 
 
-  break if  num_barcos_jugador < 1 ||  num_barcos_compu < 1 || round >97
+  break if  num_barcos_jugador < 1 ||  num_barcos_compu < 1 || round >100
 end
 
-if num_barcos_jugador > num_barcos_compu 
+  if num_barcos_jugador > num_barcos_compu 
 
    
-mostrar_titulo()
+    mostrar_titulo()
 
-puts "felicitaciones ".to_upcase
-puts "¡es una victoria!".to_ upcase
-puts 
+    puts "felicitaciones ".upcase
+    puts "¡es una victoria!".upcase
+    puts 
 
-anytecla
-exit
+    anytecla
+    exit
 
-elsif num_barcos_jugador < num_barcos_compu
+    elsif num_barcos_jugador < num_barcos_compu
 
-puts " esta vez fue una derrota".to_upcase
-puts "¡si lo intentas de nuevo seguro la proxima lo lograras!".to_ upcase
-puts 
+    puts " esta vez fue una derrota".upcase
+    puts "¡si lo intentas de nuevo seguro la proxima lo lograras!".upcase
+    puts 
 
 anytecla
 
@@ -514,7 +540,7 @@ else
 mostrar_titulo()
 
 puts 
-puts "¡Es un empate!".to_ upcase
+puts "¡es un empate!".upcase
 puts 
 
 anytecla
@@ -522,6 +548,7 @@ anytecla
 exit
 end
 
+end
 main
 
 
