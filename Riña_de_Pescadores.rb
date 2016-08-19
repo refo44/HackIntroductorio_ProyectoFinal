@@ -192,7 +192,7 @@ def colocar_en_tablero(tablero,s)
   ocupado = false
 
   loop do
-
+    system('clear')
   	if ocupado == true then
 
      puts
@@ -200,7 +200,8 @@ def colocar_en_tablero(tablero,s)
      puts 
 
   	end
-  
+    mostrar_tablero(tablero)     
+    puts
     print "Introduzca posicion: "
     a = get_keypressed.to_i 
     print a 
@@ -219,8 +220,7 @@ def colocar_en_tablero(tablero,s)
 
       ocupado = true 
 
-      mostrar_tablero(barcos_jugador)     
-
+     
     end
   
     break if ocupado == false 
@@ -315,18 +315,22 @@ end
 
 system('clear')
   puts titulo
+  puts
   mostrar_tablero(tablero)
   puts
   anytecla
 end
 
-def mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , tablero,titulo )
+def mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , tablero,titulo, repetir, ultimo_atk )
 
 system('clear')
   make_titulo()
   puts
   puts " turno: #{nombre_turno.upcase.colorize(:color => :red, :background => :yellow)}"
   puts " round: #{round}"
+  puts " repetir: #{repetir}"
+  puts
+  puts " ultimo ataque: #{ultimo_atk}"
   puts " barcos de la computadora hundidos: #{num_barcos-num_barcos_compu}"
   puts " barcos del jugador hundidos: #{num_barcos-num_barcos_jugador}"
   puts
@@ -357,7 +361,7 @@ def check_atk(x ,y , tablero, simbolo, tablero_barcos)
 
 return valor
 
-# system('clear')
+
 
 end
 
@@ -378,28 +382,28 @@ def main
   barcos_jugador = fill_tablero("\u25a7",10)
   barcos_compu = fill_tablero("\u25a7",10)
 
-  #inicializamos los tableros de targets
+# inicializamos los tableros de targets
   targets_jugador = fill_tablero("\u25a7",10)
   targets_compu = fill_tablero("\u25a7",10)
 
- #mostrar_titulo()
- #anytecla()
+ mostrar_titulo()
+ anytecla()
 
   
   jugador_name[0] = login_menu()
-  #num_barcos = select_num_barcos()
-  num_barcos = 10 #modo debug
+  num_barcos = select_num_barcos()
+  #num_barcos = 10 #debug
  
  set_barcos_aleatorio(barcos_compu, num_barcos)
-  mostrar_set_tablero(barcos_compu,"barcos compu")
+  #mostrar_set_tablero(barcos_compu,"barcos compu") #debug
   
   menu_set_barcos(barcos_jugador, num_barcos)
-  mostrar_set_tablero( barcos_jugador , "barcos jugador" ) 
+  mostrar_set_tablero( barcos_jugador , " Barcos de " + jugador_name[0].upcase ) 
 
   
   loading_partida()
 
-  ## Partida
+  ####### Aqui Comienza la Partida ##############
   
   num_barcos_jugador = num_barcos
 
@@ -408,7 +412,7 @@ def main
   num_barcos_compu = num_barcos
 
  round = 0
-
+ ultimo_atk = "ninguno"
 
 
  loop do 
@@ -418,45 +422,55 @@ def main
  nombre_turno =jugador_name[turno]
  repetir = 0
 
- mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno)
+ mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno.capitalize,repetir,ultimo_atk)
  
  loop do
-     sol = 0
+    sol = 3
 
-     while sol == 0  do
-    mostrar_tablero(targets_jugador)
-    print "Introduzca posicion: "
-    a = get_keypressed.to_i 
-    print a 
-    b = get_keypressed.to_i
-    print b
-    sleep 0.4
-    system('clear')
+    loop  do
 
-      #a = rand(targets_jugador.length)
-
-      #b = rand(targets_jugador.length)
-    
-    if targets_jugador[a][b] != "\u25a7"
-        sol = 0
-        else
-        sol = check_atk(a,b,targets_jugador,simbolo,barcos_compu)
+        if sol == 0 then 
+            puts "No puede volver atacar la misma posicion "
         end
+
+         mostrar_tablero(targets_jugador)
+         print "Introduzca posicion: "
+         a = get_keypressed.to_i 
+         print a 
+         b = get_keypressed.to_i
+         print b
+         sleep 0.4
+         system('clear')
+     
+           #a = rand(targets_jugador.length)
+     
+           #b = rand(targets_jugador.length)
+         
+          if targets_jugador[a][b] != "\u25a7"
+             sol = 0
+          else
+             sol = check_atk(a,b,targets_jugador,simbolo,barcos_compu)
+          end
+        
+        break if sol!=0
       end
 
 
 
-if sol==2 then # ataque exitoso 
-              #se realiza un nuevo intento por acertar el ataque
+if sol==2 then # ataque exitoso
 
+ultimo_atk = "fue de " + nombre_turno.capitalize + " y resultó exitoso"
 repetir += 1 
-num_barcos_compu -= 1
+num_barcos_jugador -= 1
 
 elsif sol == 1  #ataque cayo en el agua
-repetir=0
-end  
+repetir = 0
+ultimo_atk = "fue de " + nombre_turno.capitalize + " y cayo en el agua"
 
-mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno)
+end 
+
+
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets "+ nombre_turno.capitalize,repetir,ultimo_atk)
 
 break if repetir==0
 end
@@ -466,7 +480,7 @@ turno = 1
 nombre_turno =jugador_name[turno]
 repetir = 0
 
-mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno)
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno.capitalize,repetir,ultimo_atk)
 
 loop do
      sol = 0
@@ -490,25 +504,23 @@ loop do
 
 
 if sol==2 then # ataque exitoso
-               # se realiza un nuevo intento por acertar el ataque 
+
+ultimo_atk = "fue de "+nombre_turno.capitalize+" y resultó exitoso"
 repetir += 1 
 num_barcos_jugador -= 1
 
 elsif sol == 1  #ataque cayo en el agua
-repetir=0
+repetir = 0
+ultimo_atk = "fue de "+nombre_turno.capitalize+" y cayó en el agua"
 
-end  
-mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno)
+end 
+
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets "+ nombre_turno.capitalize,repetir,ultimo_atk)
 break if repetir==0 
 end
 
 
-
-
-
 round += 1 
-
-
 
   break if  num_barcos_jugador < 1 ||  num_barcos_compu < 1 || round >100
 end
