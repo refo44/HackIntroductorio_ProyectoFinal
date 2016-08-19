@@ -307,13 +307,27 @@ system('clear')
   anytecla
 end
 
+def mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , tablero,titulo )
+
+system('clear')
+  puts " turno: #{nombre_turno}"
+  puts " round: #{round}"
+  puts " barcos de la computadora hundidos: #{num_barcos-num_barcos_compu}"
+  puts "barcos del jugador hundidos: #{num_barcos-num_barcos_jugador}"
+  puts
+  puts titulo
+  mostrar_tablero(tablero)
+  puts
+  anytecla
+end
+
 
 def check_atk(x ,y , tablero, simbolo, tablero_barcos)
 
 
  if tablero_barcos[x][y] == "\u25a7"
         
-       tablero[x][y] = "\u2635"
+       tablero[x][y] = "\u2652"
 
       valor = 1
 
@@ -341,8 +355,8 @@ def main
 
   num_symbols = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
   letras_list = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-  simbolo = [ "\u25a7", "\u2635" ,"\u2693"  ]
-  jugador_name = [" ", " " ]
+  simbolo = [ "\u25a7", "\u2652" ,"\u2693"  ]
+  jugador_name = ["jugador", "compu" ]
 
 # inicializamos los tableros de barcos 
   barcos_jugador = fill_tablero("\u25a7",10)
@@ -379,11 +393,15 @@ def main
 
  round = 0
 
+
+
  loop do 
 
  
  turno = 0
-repetir = 0
+ nombre_turno =jugador_name[turno]
+ repetir = 0
+ mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets jugador")
  loop do
      sol = 0
 
@@ -409,9 +427,10 @@ end
 
 
 turno = 1
+nombre_turno =jugador_name[turno]
 repetir = 0
 
-mostrar_set_tablero( targets_jugador , "targets jugador" ) 
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_jugador,"targets jugador")
 
 loop do
      sol = 0
@@ -438,7 +457,7 @@ puts "sol: #{sol}"
 break if repetir==0 || repetir > 3
 end
 
-mostrar_set_tablero( targets_compu , "targets compu" ) 
+mostrar_status_juego(round, nombre_turno, num_barcos, num_barcos_jugador, num_barcos_compu , targets_compu,"targets compu")
 
 
 
