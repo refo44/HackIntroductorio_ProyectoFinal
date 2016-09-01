@@ -395,7 +395,7 @@ def main
   #num_barcos = 10 #debug
  
  set_barcos_aleatorio(barcos_compu, num_barcos)
-  #mostrar_set_tablero(barcos_compu,"barcos compu") #debug
+  mostrar_set_tablero(barcos_compu,"barcos compu") #debug
   
   menu_set_barcos(barcos_jugador, num_barcos)
   mostrar_set_tablero( barcos_jugador , " Barcos de " + jugador_name[0].upcase ) 
@@ -435,9 +435,9 @@ def main
 
          mostrar_tablero(targets_jugador)
          print "Introduzca posicion: "
-         a = get_keypressed.to_i 
+         a = get_keypressed.to_i #debug
          print a 
-         b = get_keypressed.to_i
+         b = get_keypressed.to_i #debug
          print b
          sleep 0.4
          system('clear')
@@ -461,7 +461,7 @@ if sol==2 then # ataque exitoso
 
 ultimo_atk = "fue de " + nombre_turno.capitalize + " y resultó exitoso"
 repetir += 1 
-num_barcos_jugador -= 1
+num_barcos_compu -= 1
 
 elsif sol == 1  #ataque cayo en el agua
 repetir = 0
